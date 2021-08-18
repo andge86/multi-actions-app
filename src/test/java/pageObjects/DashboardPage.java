@@ -3,6 +3,8 @@ package pageObjects;
 import enums.ButtonColor;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.support.PageFactory;
@@ -58,14 +60,16 @@ public class DashboardPage extends BasePage {
         Thread.sleep(500);
         openAppPermissionsButtons.get(0).click();
         Thread.sleep(500);
-        appPermissionsSectionTab.click();
-        Thread.sleep(500);
+      //  appPermissionsSectionTab.click();
+      //  Thread.sleep(500);
         permissionsToggle.click();
         Thread.sleep(500);
-        backButton.click();
+        driver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
         Thread.sleep(500);
-        backButton.click();
-        Thread.sleep(500);
+    //    backButton.click();
+    //    Thread.sleep(500);
+    //    backButton.click();
+    //    Thread.sleep(500);
         return this;
     }
 
