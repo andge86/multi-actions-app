@@ -1,8 +1,10 @@
 # This workflow will build a Java project with Maven
 
-name: Java CI with Maven
+name: Java Appium CI
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -33,4 +35,4 @@ jobs:
         target: ${{ matrix.target }}
         arch: x86_64
         profile: Nexus 6
-        script: mvn clean test -Pandroid
+        script: mvn clean test
