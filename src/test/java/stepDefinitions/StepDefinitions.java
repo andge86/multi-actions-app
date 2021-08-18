@@ -1,4 +1,4 @@
-package hellocucumber;
+package stepDefinitions;
 
 import enums.ButtonColor;
 import io.appium.java_client.android.AndroidDriver;

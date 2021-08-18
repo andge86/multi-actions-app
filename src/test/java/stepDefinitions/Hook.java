@@ -1,4 +1,4 @@
-package hellocucumber;
+package stepDefinitions;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidStartScreenRecordingOptions;
@@ -10,9 +10,7 @@ import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import lombok.AllArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
-import org.junit.AfterClass;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -22,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Hook extends BaseUtil {
@@ -58,8 +55,9 @@ public class Hook extends BaseUtil {
     private void initCapabilities() throws MalformedURLException {
         capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "11");
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10");
+       // capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
+        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
         // capabilities.setCapability(MobileCapabilityType.APP, new File("Multi-action_Home_Button_base.apk").getAbsolutePath());
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
         capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, "com.home.button.bottom");
@@ -81,7 +79,7 @@ public class Hook extends BaseUtil {
 
     private void initDriver() throws MalformedURLException {
       //  driver = new AndroidDriver<>(new URL(serviceUrl), capabilities);
-          driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+          driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         base.driver = driver;
     }
