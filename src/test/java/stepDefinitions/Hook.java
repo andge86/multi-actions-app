@@ -5,8 +5,6 @@ import io.appium.java_client.android.AndroidStartScreenRecordingOptions;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.remote.MobilePlatform;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -14,6 +12,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import utils.BaseUtil;
+import utils.Utils;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -25,12 +25,13 @@ import java.util.concurrent.TimeUnit;
 public class Hook extends BaseUtil {
 
     private final BaseUtil base;
-    DesiredCapabilities capabilities;
+    private DesiredCapabilities capabilities;
     //  private AppiumDriverLocalService service;
     //  private String serviceUrl;
     public static final String APP_PACKAGE = "com.home.button.bottom";
     public static final String APP_REL_PATH = "Multi-action_Home_Button_base.apk";
     public static String PLATFORM_VERSION = "11";
+    public static boolean IS_FIRST_TEST = true;  // needed to install new app version and to add app remissions on first run
 
     public Hook(BaseUtil base) {
         this.base = base;
@@ -39,7 +40,12 @@ public class Hook extends BaseUtil {
     @Before
     public void startTest() throws Exception {
         if (System.getProperty("PLATFORM_VERSION") != null) PLATFORM_VERSION = System.getProperty("PLATFORM_VERSION");
-        if (!isAppInstalled()) installApp();
+        // Installing new app to have fresh run
+        System.out.println(PLATFORM_VERSION);
+        if (IS_FIRST_TEST) {
+            Utils.uninstallApp();
+            Utils.installApp();
+        }
         if (capabilities == null) initCapabilities();
         //   if (service == null) startService();
         if (driver == null) initDriver();
@@ -51,16 +57,15 @@ public class Hook extends BaseUtil {
         addScreenshotIfTestFailed(scenario, true, true);
         stopAndAddVideoRecording(scenario, false, true);
         // driver.resetApp();
-        // driver.removeApp("com.home.button.bottom");
+        IS_FIRST_TEST = false;
         driver.quit();
-        System.out.println("Driver is quit");
+        System.out.println("Driver quited");
     }
 
-    private void initCapabilities() throws MalformedURLException {
+    private void initCapabilities() {
         capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, PLATFORM_VERSION);
-        // capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
         // capabilities.setCapability(MobileCapabilityType.APP, new File(APP_REL_PATH).getAbsolutePath());
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
@@ -82,7 +87,7 @@ public class Hook extends BaseUtil {
     private void initDriver() throws MalformedURLException {
         //  driver = new AndroidDriver<>(new URL(serviceUrl), capabilities);
         driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         base.driver = driver;
     }
 
@@ -109,30 +114,6 @@ public class Hook extends BaseUtil {
         if (addToReport) scenario.attach(data, "video/mp4", timestamp);
         // add video to target folder
         if (writeToFile) Files.write(Paths.get("target/" + scenario.getName() + ".mp4"), data);
-    }
-
-    private void installApp() throws IOException, InterruptedException {
-        System.out.println("Installing the app");
-        ProcessBuilder pb = new ProcessBuilder("adb", "install", "-r", APP_REL_PATH);
-        Process pc = pb.start();
-        pc.waitFor();
-    }
-
-    private Boolean isAppInstalled() throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder("adb", "shell", "pm", "list", "packages", APP_PACKAGE);
-        Process process = pb.start();
-        process.waitFor();
-        String line = "";
-        try {
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while ((line = reader.readLine()) != null) {
-                if (line.contains(APP_PACKAGE)) return true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
 }

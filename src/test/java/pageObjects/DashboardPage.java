@@ -25,33 +25,24 @@ public class DashboardPage extends BasePage {
 
     }
 
-
+    @AndroidFindBy(id = "toolbar")
+    private AndroidElement topMenuToolbar;
     @AndroidFindBy(id = "android:id/button1")
-    private List<AndroidElement> openAppPermissionsButtons;  // list is used to check if button is present for first launch
+    private AndroidElement openAppPermissionsButton;
     @AndroidFindBy(accessibility = "Multi-action Home Button")
     private AndroidElement appPermissionsSectionTab;
     @AndroidFindBy(id = "android:id/switch_widget")
     private AndroidElement permissionsToggle;
-    @AndroidFindBy(accessibility = "Back")
-    private AndroidElement backButton;
-
     @AndroidFindBy(id = "layout_tuto")
-    private List<AndroidElement> tutorialElements; // list is used to check if tutorial is present or not
+    private AndroidElement tutorialElement;
     @AndroidFindBy(id = "cancel_button")
     private List<AndroidElement> cancelRatePopUpButtons; // list is used to check if rate pop up is present or not
-
     @AndroidFindBy(id = "click_layout")
     private AndroidElement actionOnClickTab;
-  //  @AndroidFindBy(id = "vibration_strength_layout")
-  //  private AndroidElement vibrationStrengthTab;
     @AndroidFindBy(id = "vibration_strength_subtitle_textview")
     private AndroidElement vibrationStrengthValue;
- //   @AndroidFindBy(id = "color_layout")
- //   private AndroidElement buttonColorTab;
     @AndroidFindBy(id = "color_selected_imageview")
     private AndroidElement buttonColorImage;
- //   @AndroidFindBy(id = "notification_checkbox")
- //   private AndroidElement notificationCheckbox;
 
     // find AndroidElement and scroll  by UIAutomator
     private AndroidElement getElementByUiAutomator(String id) {
@@ -61,65 +52,49 @@ public class DashboardPage extends BasePage {
     }
 
 
-    public DashboardPage addAppPermissions() throws InterruptedException {
-        Thread.sleep(1000);
-        openAppPermissionsButtons.get(0).click();
-        Thread.sleep(1000);
-      if (Hook.PLATFORM_VERSION.equals("11")) appPermissionsSectionTab.click();
-      //  Thread.sleep(500);
-        permissionsToggle.click();
-        Thread.sleep(1000);
+    public DashboardPage addAppPermissions() {
+        waitAndTap(openAppPermissionsButton);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (Hook.PLATFORM_VERSION.equals("11")) waitAndTap(appPermissionsSectionTab);
+        waitAndTap(permissionsToggle);
         pressBackPhoneButton();
         if (Hook.PLATFORM_VERSION.equals("11")) pressBackPhoneButton();
-        Thread.sleep(1000);
-    //    backButton.click();
-    //    Thread.sleep(500);
-    //    backButton.click();
-    //    Thread.sleep(500);
         return this;
     }
 
-    public boolean isAppPermissionButtonPresent() {
-        return (openAppPermissionsButtons.size() == 1);
+    public void clickOnTutorialToSkip(){
+        waitAndTap(tutorialElement);
     }
 
-    public boolean isTutorialElementPresent() {
-        return (tutorialElements.size() == 1);
-    }
-
-    public boolean isRatePopPuPresent() {
+    public boolean isRatePopUpPresent() {
         return (cancelRatePopUpButtons.size() == 1);
     }
 
-    public DashboardPage pressBackPhoneButton(){
+    public boolean isTopMenuToolbarPresent() {
+        return (topMenuToolbar.isDisplayed());
+    }
+
+    public DashboardPage pressBackPhoneButton() {
         driver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
         return this;
     }
 
-    public DashboardPage clickInTheMiddleOfThePage() throws InterruptedException {
-        clickTheMiddleOfThePage();
-        Thread.sleep(500);
-        return this;
-    }
-
-    public ActionPopUp clickOnActionsOnClickTab() throws InterruptedException {
-        actionOnClickTab.click();
-            Thread.sleep(500);
+    public ActionPopUp clickOnActionsOnClickTab() {
+        waitAndTap(actionOnClickTab);
         return new ActionPopUp(driver);
-
     }
 
-    public DashboardPage clickOnCancelRatePopUpButton() throws InterruptedException {
+    public DashboardPage clickOnCancelRatePopUpButton() {
         cancelRatePopUpButtons.get(0).click();
-        Thread.sleep(500);
         return this;
-
     }
 
-    public VibrationStrengthPopUp clickOnVibrationStrengthTab() throws InterruptedException {
-        Thread.sleep(500);
+    public VibrationStrengthPopUp clickOnVibrationStrengthTab() {
         getElementByUiAutomator("vibration_strength_layout").click();
-        Thread.sleep(500);
         return new VibrationStrengthPopUp(driver);
     }
 
@@ -129,7 +104,6 @@ public class DashboardPage extends BasePage {
 
     public ButtonColorPopUp clickOnButtonColorTab() throws InterruptedException {
         getElementByUiAutomator("color_layout").click();
-            Thread.sleep(500);
         return new ButtonColorPopUp(driver);
     }
 
