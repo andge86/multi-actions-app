@@ -9,14 +9,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import pageObjects.*;
+import utils.BaseUtil;
+import utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class StepDefinitions extends BaseUtil {
 
@@ -36,21 +36,28 @@ public class StepDefinitions extends BaseUtil {
     @Given("I open the App first time")
     public void openTheAppFirstTime() {
         driver = base.driver;
-        // to simulate new app installation
-        if (driver.isAppInstalled(Hook.APP_PACKAGE)) driver.removeApp(Hook.APP_PACKAGE);
-        File appFile = new File(Hook.APP_REL_PATH);
-        driver.installApp(appFile.getAbsolutePath());
-        driver.launchApp();
+   //     driver.launchApp();
         dashboardPage = new DashboardPage(driver);
+    }
+
+    @Given("I install new app")
+    public void installTheApp() throws Exception {
+        // checks if it is first test and not re-installs the app because the new app was already installed by @Before
+        // and still was not launched
+
+        // Reinstalling the app to have fresh newly installed version
+        if (!Hook.IS_FIRST_TEST) {
+            Utils.uninstallApp();
+            Utils.installOrReinstallApp();
+        }
+
     }
 
     @Given("I open the App")
     public void openTheApp() throws InterruptedException {
         driver = base.driver;
         dashboardPage = new DashboardPage(driver);
-
-        // to handle first app launch
-        if (Hook.IS_NEW_APP_INSTALLED) addPermissions();
+        if (Hook.IS_FIRST_TEST) addPermissions(); // to handle first app launch by adding permissions
     }
 
     @When("I add permissions")
@@ -58,16 +65,22 @@ public class StepDefinitions extends BaseUtil {
         dashboardPage.addAppPermissions();
     }
 
-    @And("I close tutorial screen and rate pop-up if present")
+    @And("I close tutorial screen by clicking on it")
+    public void closeTutorial() {
+        dashboardPage.clickOnTutorialToSkip();
+    }
+
+    @And("I close rate pop up if present")
     public void closeStartInstruction() throws InterruptedException {
-        if (dashboardPage.isTutorialElementPresent()) dashboardPage.clickInTheMiddleOfThePage();
-        if (dashboardPage.isRatePopPuPresent()) dashboardPage.clickOnCancelRatePopUpButton();
+        if (dashboardPage.isRatePopUpPresent()) dashboardPage.clickOnCancelRatePopUpButton();
     }
 
     @Then("Dashboard page is opened")
     public void verifyThatDashboardIsOpened() {
-        assertTrue("Dashboard is not opened, header test is not found",
-                driver.findElementByAndroidUIAutomator("new UiSelector().textContains(\"Multi-action\")").isDisplayed());
+        Assert.assertEquals("Top App toolbar is not present, seems the app is not opened",
+                true, dashboardPage.isTopMenuToolbarPresent());
+        //    assertTrue("Dashboard is not opened, header test is not found",
+        //            driver.findElementByAndroidUIAutomator("new UiSelector().textContains(\"Multi-action Home Button\")").isDisplayed());
     }
 
     @And("I click on Action on Click tab")

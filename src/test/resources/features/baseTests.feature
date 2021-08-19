@@ -3,7 +3,7 @@ Feature: Base interactions with app menu
 
   Background: I am on the Dashboard page
     Given I open the App
-    And I close tutorial screen and rate pop-up if present
+    And I close rate pop up if present
 
   @Regression @Actions
   Scenario: I can see all required Actions in Actions on click pop up
