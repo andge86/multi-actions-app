@@ -35,7 +35,7 @@ jobs:
         target: ${{ matrix.target }}
         arch: x86_64
         profile: Nexus 6
-        script: mvn clean test
+        script: mvn clean test -DPLATFORM_VERSION=10
       continue-on-error: true
     - name: Copy test execution report
       run: |

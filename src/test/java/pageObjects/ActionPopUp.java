@@ -63,10 +63,8 @@ public class ActionPopUp extends BasePage {
         return actions;
     }
 
-
-    /*  public List<String> getListOfActionsText() {
-    //      return listOfActions.stream().map(RemoteWebElement::getText).collect(Collectors.toList());
-      }
-     */
+  //  public List<String> getListOfActionsText() {
+  //      return listOfActions.stream().map(RemoteWebElement::getText).collect(Collectors.toList());
+  //  }
 
 }

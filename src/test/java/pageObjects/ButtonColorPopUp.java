@@ -25,7 +25,6 @@ public class ButtonColorPopUp extends BasePage {
 
     public DashboardPage clickONColorButton(ButtonColor color) throws InterruptedException {
         Thread.sleep(500);
-
         // To avoid exception "Cached elements do not exist in DOM anymore"
         String xpath = "//*[@resource-id='com.home.button.bottom:id/palette']//android.widget.FrameLayout";
         for (int i = 1; i <= driver.findElementsByXPath(xpath).size(); i++) {

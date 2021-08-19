@@ -8,6 +8,7 @@ import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.support.PageFactory;
+import stepDefinitions.Hook;
 
 import java.time.Duration;
 import java.util.List;
@@ -34,6 +35,10 @@ public class DashboardPage extends BasePage {
     @AndroidFindBy(accessibility = "Back")
     private AndroidElement backButton;
 
+    @AndroidFindBy(id = "layout_tuto")
+    private List<AndroidElement> tutorialElements; // list is used to check if tutorial is present or not
+    @AndroidFindBy(id = "cancel_button")
+    private List<AndroidElement> cancelRatePopUpButtons; // list is used to check if rate pop up is present or not
 
     @AndroidFindBy(id = "click_layout")
     private AndroidElement actionOnClickTab;
@@ -57,15 +62,16 @@ public class DashboardPage extends BasePage {
 
 
     public DashboardPage addAppPermissions() throws InterruptedException {
-        Thread.sleep(500);
+        Thread.sleep(1000);
         openAppPermissionsButtons.get(0).click();
-        Thread.sleep(500);
-      //  appPermissionsSectionTab.click();
+        Thread.sleep(1000);
+      if (Hook.PLATFORM_VERSION.equals("11")) appPermissionsSectionTab.click();
       //  Thread.sleep(500);
         permissionsToggle.click();
-        Thread.sleep(500);
-        driver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
-        Thread.sleep(500);
+        Thread.sleep(1000);
+        pressBackPhoneButton();
+        if (Hook.PLATFORM_VERSION.equals("11")) pressBackPhoneButton();
+        Thread.sleep(1000);
     //    backButton.click();
     //    Thread.sleep(500);
     //    backButton.click();
@@ -73,8 +79,21 @@ public class DashboardPage extends BasePage {
         return this;
     }
 
-    public Boolean isAppPermissionButtonPresent() {
+    public boolean isAppPermissionButtonPresent() {
         return (openAppPermissionsButtons.size() == 1);
+    }
+
+    public boolean isTutorialElementPresent() {
+        return (tutorialElements.size() == 1);
+    }
+
+    public boolean isRatePopPuPresent() {
+        return (cancelRatePopUpButtons.size() == 1);
+    }
+
+    public DashboardPage pressBackPhoneButton(){
+        driver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
+        return this;
     }
 
     public DashboardPage clickInTheMiddleOfThePage() throws InterruptedException {
@@ -87,6 +106,13 @@ public class DashboardPage extends BasePage {
         actionOnClickTab.click();
             Thread.sleep(500);
         return new ActionPopUp(driver);
+
+    }
+
+    public DashboardPage clickOnCancelRatePopUpButton() throws InterruptedException {
+        cancelRatePopUpButtons.get(0).click();
+        Thread.sleep(500);
+        return this;
 
     }
 

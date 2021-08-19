@@ -20,25 +20,25 @@ import static org.junit.Assert.*;
 
 public class StepDefinitions extends BaseUtil {
 
-    private BaseUtil base;
+    private final BaseUtil base;
 
     public StepDefinitions(BaseUtil base) {
         this.base = base;
     }
 
-    DashboardPage dashboardPage;
-    ActionPopUp actionPopUp;
-    VibrationStrengthPopUp vibrationStrengthPopUp;
-    ButtonColorPopUp buttonColorPopUp;
-    AndroidDriver<AndroidElement> driver;
+    private DashboardPage dashboardPage;
+    private ActionPopUp actionPopUp;
+    private VibrationStrengthPopUp vibrationStrengthPopUp;
+    private ButtonColorPopUp buttonColorPopUp;
+    private AndroidDriver<AndroidElement> driver;
 
 
     @Given("I open the App first time")
     public void openTheAppFirstTime() {
         driver = base.driver;
         // to simulate new app installation
-        if (driver.isAppInstalled("com.home.button.bottom")) driver.removeApp("com.home.button.bottom");
-        File appFile = new File("Multi-action_Home_Button_base.apk");
+        if (driver.isAppInstalled(Hook.APP_PACKAGE)) driver.removeApp(Hook.APP_PACKAGE);
+        File appFile = new File(Hook.APP_REL_PATH);
         driver.installApp(appFile.getAbsolutePath());
         driver.launchApp();
         dashboardPage = new DashboardPage(driver);
@@ -58,9 +58,10 @@ public class StepDefinitions extends BaseUtil {
         dashboardPage.addAppPermissions();
     }
 
-    @And("I close introduction screen")
+    @And("I close tutorial screen and rate pop-up if present")
     public void closeStartInstruction() throws InterruptedException {
-        dashboardPage.clickInTheMiddleOfThePage();
+        if (dashboardPage.isTutorialElementPresent()) dashboardPage.clickInTheMiddleOfThePage();
+        if (dashboardPage.isRatePopPuPresent()) dashboardPage.clickOnCancelRatePopUpButton();
     }
 
     @Then("Dashboard page is opened")
@@ -99,7 +100,6 @@ public class StepDefinitions extends BaseUtil {
         Assert.assertEquals("Some more actions are shown in the app:" + actions, 0, actions.size());
 
     }
-
 
     @And("I put vibration strength to 100")
     public DashboardPage putVibrationStrengthTo100() throws InterruptedException {

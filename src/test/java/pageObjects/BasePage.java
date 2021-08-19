@@ -28,20 +28,6 @@ public class BasePage {
         action.press(PointOption.point(height / 2, width / 2)).release().perform();
     }
 
-    protected void scrollHalfScreenDown() {
-        TouchAction action = new TouchAction(driver);
-        int screenHeight = driver.manage().window().getSize().getHeight();
-        int screenWidth = driver.manage().window().getSize().getWidth();
-        //    System.out.println("Screen height " + screenHeight);
-        //    System.out.println("Screen width " + screenWidth);
-        action.
-                longPress(PointOption.point(screenWidth / 2, screenHeight / 2))
-                .moveTo(PointOption.point(screenWidth / 2, 0))
-                .release()
-                .perform();
-
-    }
-
     protected void clickTheElementEnd(AndroidElement androidElement) throws InterruptedException {
             Thread.sleep(500);
         Point location = androidElement.getCenter();

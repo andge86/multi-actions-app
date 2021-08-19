@@ -24,10 +24,13 @@ import java.util.concurrent.TimeUnit;
 
 public class Hook extends BaseUtil {
 
-    private BaseUtil base;
+    private final BaseUtil base;
     DesiredCapabilities capabilities;
-    private AppiumDriverLocalService service;
-    private String serviceUrl;
+    //  private AppiumDriverLocalService service;
+    //  private String serviceUrl;
+    public static final String APP_PACKAGE = "com.home.button.bottom";
+    public static final String APP_REL_PATH = "Multi-action_Home_Button_base.apk";
+    public static String PLATFORM_VERSION = "11";
 
     public Hook(BaseUtil base) {
         this.base = base;
@@ -35,9 +38,10 @@ public class Hook extends BaseUtil {
 
     @Before
     public void startTest() throws Exception {
+        if (System.getProperty("PLATFORM_VERSION") != null) PLATFORM_VERSION = System.getProperty("PLATFORM_VERSION");
         if (!isAppInstalled()) installApp();
         if (capabilities == null) initCapabilities();
-     //   if (service == null) startService();
+        //   if (service == null) startService();
         if (driver == null) initDriver();
         startVideoRecording();
     }
@@ -46,40 +50,38 @@ public class Hook extends BaseUtil {
     public void closeDriver(Scenario scenario) throws IOException {
         addScreenshotIfTestFailed(scenario, true, true);
         stopAndAddVideoRecording(scenario, false, true);
-        //    driver.removeApp("com.home.button.bottom");
+        // driver.resetApp();
+        // driver.removeApp("com.home.button.bottom");
         driver.quit();
         System.out.println("Driver is quit");
-        //    driver.resetApp();
     }
 
     private void initCapabilities() throws MalformedURLException {
         capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10");
-       // capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, PLATFORM_VERSION);
+        // capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
-        // capabilities.setCapability(MobileCapabilityType.APP, new File("Multi-action_Home_Button_base.apk").getAbsolutePath());
+        // capabilities.setCapability(MobileCapabilityType.APP, new File(APP_REL_PATH).getAbsolutePath());
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
-        capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, "com.home.button.bottom");
+        capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, APP_PACKAGE);
         capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, "com.home.button.activity.MainActivity");
         capabilities.setCapability(MobileCapabilityType.FULL_RESET, false);
         capabilities.setCapability(MobileCapabilityType.NO_RESET, true);
     }
 
+    /*
     private void startService() {
-        service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder()
-                .usingDriverExecutable(new File("/usr/local/Cellar/node/16.7.0/bin"))
-                .withAppiumJS(
-                        new File(
-                                "/usr/local/lib/node_modules/appium/build/lib/main.js")));
+        service = AppiumDriverLocalService.buildDefaultService();
         service.start();
         serviceUrl = service.getUrl().toString();
         System.out.println("Appium Service Address: " + serviceUrl);
     }
+     */
 
     private void initDriver() throws MalformedURLException {
-      //  driver = new AndroidDriver<>(new URL(serviceUrl), capabilities);
-          driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
+        //  driver = new AndroidDriver<>(new URL(serviceUrl), capabilities);
+        driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         base.driver = driver;
     }
@@ -111,13 +113,13 @@ public class Hook extends BaseUtil {
 
     private void installApp() throws IOException, InterruptedException {
         System.out.println("Installing the app");
-        ProcessBuilder pb = new ProcessBuilder("adb", "install", "-r", "Multi-action_Home_Button_base.apk");
+        ProcessBuilder pb = new ProcessBuilder("adb", "install", "-r", APP_REL_PATH);
         Process pc = pb.start();
         pc.waitFor();
     }
 
     private Boolean isAppInstalled() throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder("adb", "shell", "pm", "list", "packages", "com.home.button.bottom");
+        ProcessBuilder pb = new ProcessBuilder("adb", "shell", "pm", "list", "packages", APP_PACKAGE);
         Process process = pb.start();
         process.waitFor();
         String line = "";
@@ -125,7 +127,7 @@ public class Hook extends BaseUtil {
             BufferedReader reader =
                     new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = reader.readLine()) != null) {
-                if (line.contains("com.home.button.bottom")) return true;
+                if (line.contains(APP_PACKAGE)) return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
