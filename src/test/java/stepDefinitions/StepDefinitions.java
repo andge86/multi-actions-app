@@ -12,7 +12,6 @@ import pageObjects.*;
 import utils.BaseUtil;
 import utils.Utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +47,7 @@ public class StepDefinitions extends BaseUtil {
         // Reinstalling the app to have fresh newly installed version
         if (!Hook.IS_FIRST_TEST) {
             Utils.uninstallApp();
-            Utils.installOrReinstallApp();
+            Utils.installApp();
         }
 
     }
@@ -79,8 +78,6 @@ public class StepDefinitions extends BaseUtil {
     public void verifyThatDashboardIsOpened() {
         Assert.assertEquals("Top App toolbar is not present, seems the app is not opened",
                 true, dashboardPage.isTopMenuToolbarPresent());
-        //    assertTrue("Dashboard is not opened, header test is not found",
-        //            driver.findElementByAndroidUIAutomator("new UiSelector().textContains(\"Multi-action Home Button\")").isDisplayed());
     }
 
     @And("I click on Action on Click tab")

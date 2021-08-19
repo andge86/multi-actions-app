@@ -6,9 +6,9 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.touch.offset.PointOption;
 import lombok.AllArgsConstructor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,20 +16,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-@AllArgsConstructor
 public class BasePage {
 
     AndroidDriver<AndroidElement> driver;
+    WebDriverWait wait;
+    private static final int TIMEOUT = 10;
+    private static final int POLLING = 100;
 
-    protected void clickTheMiddleOfThePage() {
-        int height = driver.manage().window().getSize().getHeight();
-        int width = driver.manage().window().getSize().getWidth();
-        TouchAction action = new TouchAction(driver);
-        action.press(PointOption.point(height / 2, width / 2)).release().perform();
+    public BasePage(AndroidDriver<AndroidElement> driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, TIMEOUT, POLLING);
+    }
+
+    protected void waitAndTap(AndroidElement androidElement){
+    //    waitForBetterTestsVisualization();
+        wait.until(ExpectedConditions.visibilityOf(androidElement)).click();
     }
 
     protected void clickTheElementEnd(AndroidElement androidElement) throws InterruptedException {
-            Thread.sleep(500);
         Point location = androidElement.getCenter();
         int elementWidth = androidElement.getSize().getWidth();
 
@@ -39,7 +43,6 @@ public class BasePage {
         action.longPress(PointOption.point(location.getX(), location.getY()))
                 .moveTo(PointOption.point(location.getX() + elementWidth / 2, location.getY()))
                 .release().perform();
-            Thread.sleep(500);
     }
 
 
@@ -47,9 +50,7 @@ public class BasePage {
         org.openqa.selenium.Point point = elem.getCenter();
         int centerX = point.getX();
         int centerY = point.getY();
-
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-
         BufferedImage image = null;
         try {
             image = ImageIO.read(scrFile);
@@ -68,4 +69,13 @@ public class BasePage {
                 .orElse(ButtonColor.UNDEFINED);
     }
 
+/*
+    private void waitForBetterTestsVisualization() {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+ */
 }

@@ -31,7 +31,7 @@ public class VibrationStrengthPopUp extends BasePage {
     }
 
     public DashboardPage clickOkButton(){
-        okButton.click();
+        waitAndTap(okButton);
         return new DashboardPage(driver);
     }
 

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Utils {
-    public static void installOrReinstallApp() throws IOException, InterruptedException {
+    public static void installApp() throws IOException, InterruptedException {
         System.out.println("Installing the app");
         ProcessBuilder pb = new ProcessBuilder("adb", "install", "-r", Hook.APP_REL_PATH);
         Process pc = pb.start();
