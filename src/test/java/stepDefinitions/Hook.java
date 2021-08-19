@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class Hook extends BaseUtil {
 
     private final BaseUtil base;
-    DesiredCapabilities capabilities;
+    private DesiredCapabilities capabilities;
     //  private AppiumDriverLocalService service;
     //  private String serviceUrl;
     public static final String APP_PACKAGE = "com.home.button.bottom";
@@ -39,7 +39,9 @@ public class Hook extends BaseUtil {
     @Before
     public void startTest() throws Exception {
         if (System.getProperty("PLATFORM_VERSION") != null) PLATFORM_VERSION = System.getProperty("PLATFORM_VERSION");
-        if (!isAppInstalled()) installApp();
+        System.out.println("Is new app installed (first test run)" + IS_NEW_APP_INSTALLED);
+        if (IS_NEW_APP_INSTALLED || !isAppInstalled()) installApp();
+        IS_NEW_APP_INSTALLED = true;
         if (capabilities == null) initCapabilities();
         //   if (service == null) startService();
         if (driver == null) initDriver();
@@ -82,7 +84,7 @@ public class Hook extends BaseUtil {
     private void initDriver() throws MalformedURLException {
         //  driver = new AndroidDriver<>(new URL(serviceUrl), capabilities);
         driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         base.driver = driver;
     }
 
@@ -132,6 +134,7 @@ public class Hook extends BaseUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("App is not installed");
         return false;
     }
 

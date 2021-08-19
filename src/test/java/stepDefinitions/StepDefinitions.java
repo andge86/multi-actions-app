@@ -50,7 +50,7 @@ public class StepDefinitions extends BaseUtil {
         dashboardPage = new DashboardPage(driver);
 
         // to handle first app launch
-        if (dashboardPage.isAppPermissionButtonPresent()) addPermissions();
+        if (Hook.IS_NEW_APP_INSTALLED) addPermissions();
     }
 
     @When("I add permissions")

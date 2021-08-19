@@ -1,6 +1,7 @@
 Feature: App first time launch
   I am able to launch the app first time
 
+  @AppStability @Smoke @Regression
   Scenario: I am able to launch the app first time
     Given I open the App first time
     When I add permissions

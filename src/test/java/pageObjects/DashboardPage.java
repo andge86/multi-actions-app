@@ -27,7 +27,7 @@ public class DashboardPage extends BasePage {
 
 
     @AndroidFindBy(id = "android:id/button1")
-    private List<AndroidElement> openAppPermissionsButtons;  // list is used to check if button is present for first launch
+    private AndroidElement openAppPermissionsButton;
     @AndroidFindBy(accessibility = "Multi-action Home Button")
     private AndroidElement appPermissionsSectionTab;
     @AndroidFindBy(id = "android:id/switch_widget")
@@ -63,7 +63,7 @@ public class DashboardPage extends BasePage {
 
     public DashboardPage addAppPermissions() throws InterruptedException {
         Thread.sleep(1000);
-        openAppPermissionsButtons.get(0).click();
+        openAppPermissionsButton.click();
         Thread.sleep(1000);
       if (Hook.PLATFORM_VERSION.equals("11")) appPermissionsSectionTab.click();
       //  Thread.sleep(500);
@@ -77,10 +77,6 @@ public class DashboardPage extends BasePage {
     //    backButton.click();
     //    Thread.sleep(500);
         return this;
-    }
-
-    public boolean isAppPermissionButtonPresent() {
-        return (openAppPermissionsButtons.size() == 1);
     }
 
     public boolean isTutorialElementPresent() {
